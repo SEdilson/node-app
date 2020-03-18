@@ -2,25 +2,15 @@ const LivroDao = require('../infra/LivroDao')
 const db = require('../../config/database')
 const { check, validationResult } = require('express-validator')
 
+const LivroControlador = require('../controladores/LivroControlador')
+const livroControlador = new LivroControlador()
+
 module.exports = (app) => {
     app.get('/', (req, resp) => {
         resp.marko(require('../views/base/home/home.marko'))
     })
     
-    app.get('/livros', (req, resp) => {
-
-        const livroDao = new LivroDao(db)
-        livroDao.lista()
-                .then(books => {
-                    resp.marko(
-                        require('../views/livros/lista/lista.marko'),
-                        {
-                            livros: books
-                        }
-                    )        
-                })
-                .catch(error => console.log(error))
-    })
+    app.get('/livros', livroControlador.lista())
 
     app.get('/livros/form', (req, resp) => {
         resp.marko(require('../views/livros/form/form.marko'), { livro: {} })
